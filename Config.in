@@ -1,0 +1,4 @@
+config BR2_PACKAGE_VPBUS_TEST
+	bool VPBUS_TEST
+	help
+	  Application de test pour le driver vpbus
