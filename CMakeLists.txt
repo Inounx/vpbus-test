@@ -1,7 +1,7 @@
 #Application de test pour le driver de bus parallèle Virtu'Ailes
 cmake_minimum_required(VERSION 2.8)
 
-project(vpbus-test)
+project(vpbus_test)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BUILD_TYPE})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BUILD_TYPE})

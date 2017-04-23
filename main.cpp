@@ -44,27 +44,27 @@ int main(int argc, const char* argv[])
     char command = 'R';
 	uint8_t address = 0;
 	uint16_t data = 0;
-	scanf("%c %d %d", command, address, data);
+	scanf("%c %d %d", &command, &address, &data);
 	address = address << 1;
 	if(command == 'R' || command == 'r')
 	{
 		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-		std::fseek(f, address, std::SEEK_SET);
+		std::fseek(f, address, SEEK_SET);
 		std::fread(&data, sizeof(data), 1, f);
 		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
 		std::cout << "Read at " << std::hex << address << ", value: " << data << std::endl;
 
 		timespec_diff(&start, &stop, &result);
-		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms"
+		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
 	}
 	else
 	{
 		std::cout << "Writing at " << std::hex << address << ", value: " << data << std::endl;
 		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-		std::fseek(f, address, std::SEEK_SET);
+		std::fseek(f, address, SEEK_SET);
 		std::fwrite(&data, sizeof(data), 1, f);
 		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
-		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms"
+		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
 	}
 
 	std::cout << "fermeture du fichier" << std::endl;
