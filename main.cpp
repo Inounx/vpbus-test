@@ -21,6 +21,8 @@ void timespec_diff(struct timespec *start, struct timespec *stop,
 int main(int argc, const char* argv[])
 {
 	struct timespec start, stop, result;
+    uint16_t data;
+    uint32_t address;
 
 	std::cout << "Opening /dev/vpbus..." << std::endl;	
 	
@@ -35,39 +37,34 @@ int main(int argc, const char* argv[])
 		std::cout << "VPBUS opened !" << std::endl;
 	}
 	
-	
-	std::cout << "Enter \"W address data\" to write" << std::endl;	
-    std::cout << "or \"R address\" to read" << std::endl;
-	std::cout << "address must be between 0x00 and 0xFF" << std::endl;
-    std::cout << "data is 16bits" << std::endl;
-	
-    char command = 'R';
-	uint8_t address = 0;
-	uint16_t data = 0;
-	scanf("%c %d %d", &command, &address, &data);
-	address = address << 1;
-	if(command == 'R' || command == 'r')
-	{
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-		std::fseek(f, address, SEEK_SET);
-		std::fread(&data, sizeof(data), 1, f);
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
-		std::cout << "Read at " << std::hex << address << ", value: " << data << std::endl;
+    std::cout << "----------------------" << std::endl;
+    std::cout << "Doing read sequence ..." << std::endl;
 
-		timespec_diff(&start, &stop, &result);
-		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
-	}
-	else
-	{
-		std::cout << "Writing at " << std::hex << address << ", value: " << data << std::endl;
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
-		std::fseek(f, address, SEEK_SET);
-		std::fwrite(&data, sizeof(data), 1, f);
-		clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
-		std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
-	}
+    address = 10;
 
-	std::cout << "fermeture du fichier" << std::endl;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+    std::fseek(f, address, SEEK_SET);
+    std::fread(&data, sizeof(data), 1, f);
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+    std::cout << "Read at " << std::hex << address << ", value: " << data << std::endl;
+
+    timespec_diff(&start, &stop, &result);
+    std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
+
+    std::cout << std::endl << "----------------------" << std::endl;
+    std::cout << "Doing write sequence..." << std::endl;
+	
+    data = 0xABCD;
+
+    std::cout << "Writing at " << std::hex << address << ", value: " << data << std::endl;
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+    std::fseek(f, address, SEEK_SET);
+    std::fwrite(&data, sizeof(data), 1, f);
+    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+    std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
+
+
+    std::cout << "Closing device" << std::endl;
 	std::fclose(f);
 	
 	return 0;
