@@ -26,7 +26,7 @@ int main(int argc, const char* argv[])
 
 	std::cout << "Opening /dev/vpbus..." << std::endl;	
 	
-	FILE* f = std::fopen("/dev/vpbus", "wb");
+	FILE* f = std::fopen("/dev/vpbus", "r+b");
 	if(!f)
 	{
 		std::cout << "Unable to open /dev/vpbus !" << std::endl;
