@@ -20,23 +20,25 @@ void timespec_diff(struct timespec *start, struct timespec *stop,
 
 int main(int argc, const char* argv[])
 {
-	struct timespec start, stop, result;
-    uint16_t data;
+    struct timespec start, stop, result;
+    static const uint16_t dataSize = 2048;
+    uint16_t data[dataSize];
     uint32_t address;
 
-	std::cout << "Opening /dev/vpbus..." << std::endl;	
+    std::cout << "Opening /dev/vpbus..." << std::endl;	
 	
-	FILE* f = std::fopen("/dev/vpbus", "r+b");
-	if(!f)
-	{
-		std::cout << "Unable to open /dev/vpbus !" << std::endl;
-		return 0;
-	}
-	else
-	{
-		std::cout << "VPBUS opened !" << std::endl;
-	}
+    FILE* f = std::fopen("/dev/vpbus", "r+b");
+    if(!f)
+    {
+        std::cout << "Unable to open /dev/vpbus !" << std::endl;
+        return 0;
+    }
+    else
+    {
+        std::cout << "VPBUS opened !" << std::endl;
+    }
 	
+    setvbuf(f, NULL, _IONBF, 0);
     std::cout << "----------------------" << std::endl;
     std::cout << "Doing read sequence ..." << std::endl;
 
@@ -44,9 +46,9 @@ int main(int argc, const char* argv[])
 
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
     std::fseek(f, address, SEEK_SET);
-    std::fread(&data, sizeof(data), 1, f);
+    std::fread(data, sizeof(data[0]), dataSize, f);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
-    std::cout << "Read at " << std::hex << address << ", value: " << data << std::endl;
+    std::cout << "Read " << dataSize << " blocks of " << sizeof(data[0]) << " at " << std::hex << address << std::endl;
 
     timespec_diff(&start, &stop, &result);
     std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
@@ -54,12 +56,11 @@ int main(int argc, const char* argv[])
     std::cout << std::endl << "----------------------" << std::endl;
     std::cout << "Doing write sequence..." << std::endl;
 	
-    data = 0xABCD;
 
-    std::cout << "Writing at " << std::hex << address << ", value: " << data << std::endl;
+    std::cout << "Writing " << dataSize << "blocks of " << sizeof(data[0]) << " at " << std::hex << address << std::endl;
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
     std::fseek(f, address, SEEK_SET);
-    std::fwrite(&data, sizeof(data), 1, f);
+    std::fwrite(&data, sizeof(data[0]), dataSize, f);
     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
     std::cout << "Operation took " << (double)result.tv_sec*1000 + (double)result.tv_nsec / 1000000.0 << " ms";
 
