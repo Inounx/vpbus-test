@@ -9,6 +9,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -Wall -Wextra")
 
 add_executable(
 	vpbus_test
+        VPbusTest.cpp
 	main.cpp
 )
 
